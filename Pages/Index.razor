@@ -1,0 +1,61 @@
+﻿@page "/"
+
+@using ASPNETCoreBlazorWithServerCalls.Codes
+@using ASPNETCoreBlazorWithServerCalls.Data
+@inject SesameServiceTestCalls SesameService
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.<br /><br />
+
+@if (!isLoaded)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>DbId</th>
+                <th>Name</th>
+                <th>Currency</th>
+                <th>Population</th>
+                <th>Sample</th>
+                <th>Languages</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var db in databases)
+            {
+            <tr>
+                <td>@db.Id</td>
+                <td>@db.Name</td>
+                <td>@dbDetails[db.Id].Currency</td>
+                <td>@dbDetails[db.Id].Population.ToString()</td>
+                <td>@dbDetails[db.Id].Sample.ToString()</td>
+                <td>@dbDetails[db.Id].Languages.Select(i => i.Name).Aggregate((i, j) => i + ", " + j)</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private bool isLoaded = false;
+    private KeyAndValueItem[] databases;
+    private Dictionary<string, SPDatabaseDetailsResponse> dbDetails = new Dictionary<string, SPDatabaseDetailsResponse>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        databases = await SesameService.GetDatabasesAsync();
+        foreach (KeyAndValueItem item in databases)
+        {
+            // query each db details
+            dbDetails[item.Id] = await SesameService.GetDatabaseDetailsAsync(item.Id);
+        }
+        isLoaded = true;
+    }
+
+}

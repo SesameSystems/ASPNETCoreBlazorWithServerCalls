@@ -56,7 +56,7 @@ namespace ASPNETCoreBlazorWithServerCalls
             // initialize logger
             loggerFactory.AddLog4Net();
             Forge.Logging.LogManager.LOGGER = Forge.Logging.Log4net.Log4NetManager.Instance;
-            Forge.Logging.LogUtils.LogAll();
+            Forge.Logging.Utils.LogUtils.LogAll();
             LOGGER = LogManager.GetLogger(typeof(Startup));
 
             // bind configuration to POCO
